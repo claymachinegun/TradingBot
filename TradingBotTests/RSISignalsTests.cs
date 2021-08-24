@@ -11,7 +11,7 @@ namespace TradingBotTests{
         }
 
 
-        public List<decimal> FakeUpPriceFeed = new List<decimal>() {
+        public List<decimal> _fakePriceFeedUp = new List<decimal>() {
             44.3389M,
             44.0902M,
             44.1497M,
@@ -29,7 +29,7 @@ namespace TradingBotTests{
             46.2820M
         };
 
-        public List<decimal> FakePriceFeed = new List<decimal>() {
+        public List<decimal> _fakePriceFeedForBuy = new List<decimal>() {
             46.4116M,
             46.2222M,
             45.6439M,
@@ -55,7 +55,7 @@ namespace TradingBotTests{
             var rsi = new RelativeStrengthIndex(14);
             var indicator = new TradingBot.TechIndicators.RSIOverSold(rsi);
             decimal? rsiValue = null; 
-            foreach(var price in FakeUpPriceFeed) {
+            foreach(var price in _fakePriceFeedUp) {
                 priceFeed.Push(price);
                 rsiValue = rsi.GetValue(priceFeed);
             }
@@ -69,7 +69,7 @@ namespace TradingBotTests{
             var rsi = new RelativeStrengthIndex(14);
             var indicator = new TradingBot.TechIndicators.RSIOverSold(rsi);
             decimal? rsiValue = null; 
-            foreach(var price in FakeUpPriceFeed.OrderByDescending(x=>x)) {
+            foreach(var price in _fakePriceFeedUp.OrderByDescending(x=>x)) {
                 priceFeed.Push(price);
                 rsiValue = rsi.GetValue(priceFeed);
             }
@@ -83,7 +83,7 @@ namespace TradingBotTests{
             var rsi = new RelativeStrengthIndex(14);
             var indicator = new TradingBot.TechIndicators.RSIAndPriceGain(rsi);
             decimal? rsiValue = null; 
-            foreach(var price in FakeUpPriceFeed) {
+            foreach(var price in _fakePriceFeedUp) {
                 priceFeed.Push(price);
                 rsiValue = rsi.GetValue(priceFeed);
             }
@@ -99,7 +99,7 @@ namespace TradingBotTests{
             var rsi = new RelativeStrengthIndex(14);
             var indicator = new TradingBot.TechIndicators.RSIAndPriceGain(rsi);
             decimal? rsiValue = null; 
-            foreach(var price in FakePriceFeed) {
+            foreach(var price in _fakePriceFeedForBuy) {
                 priceFeed.Push(price);
                 rsiValue = rsi.GetValue(priceFeed);
             }
