@@ -75,7 +75,7 @@ namespace TradingBot.Binance {
 
         public async Task<decimal> GetPairCurrentPrice(string coin, string fiat)
         {
-            RestRequest request = new RestRequest($"/api/v3/ticker/price?symbol={coin+fiat}");
+            RestRequest request = new RestRequest($"api/v3/ticker/price?symbol={coin+fiat}");
             var result = await _client.GetAsync<CurrentPriceResponse>(request);
             if(result != null) {
                 return result.Price;
