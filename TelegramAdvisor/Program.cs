@@ -20,6 +20,8 @@ namespace TelegramAdvisor
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
+                    webBuilder.UseUrls("http://localhost:8443");              
+
                     webBuilder.UseStartup<Startup>();
                 });
     }

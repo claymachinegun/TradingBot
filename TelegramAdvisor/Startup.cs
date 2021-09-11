@@ -17,6 +17,8 @@ using TradingBot.Binance;
 using TradingBot.TechIndicators;
 using TradingBot.TechIndexes;
 using TelegramAdvisor.Services;
+using Telegram.Bot;
+using Microsoft.AspNetCore.Mvc.NewtonsoftJson;
 namespace TelegramAdvisor
 {
     public class Startup
@@ -34,13 +36,13 @@ namespace TelegramAdvisor
             services.AddMemoryCache();
             services.AddSingleton<ITradingApiProvider, BinanceApi>(factory => {
                 BinanceApi api = new BinanceApi(
-                    "<API_KEY>",
-                    "<SECRET_KEY>",
+                    Configuration.GetSection("Binance").GetValue<string>("ApiKey"),
+                    Configuration.GetSection("Binance").GetValue<string>("Secret"),
                     "https://api.binance.com","1d"
                 );
                 return api;
             });
-            services.AddTransient<Advisor>(factory => {
+            services.AddScoped<Advisor>(factory => {
                 Advisor advisor = new Advisor();
                 advisor.Threshold = 0.7;
                 var rsi = new RelativeStrengthIndex(14);
@@ -51,8 +53,16 @@ namespace TelegramAdvisor
                 advisor.AddIndicator(new MACD(12,26,9), 0.25);
                 return advisor;
             });
-            services.AddTransient<AdvisorService>();
-            services.AddControllers();
+            services.AddScoped<AdvisorService>();
+            services.AddHostedService<TelegramService>();
+            
+            services.AddHttpClient("tgwebhook")
+                    .AddTypedClient<ITelegramBotClient>(httpClient
+                        => new TelegramBotClient(Configuration.GetSection("BotConfiguration").GetValue<string>("BotToken"), httpClient));
+
+            services.AddScoped<TelegramReplyService>();
+            services.AddControllers()
+                    .AddNewtonsoftJson();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "TelegramAdvisor", Version = "v1" });
@@ -73,12 +83,16 @@ namespace TelegramAdvisor
             app.UseHttpsRedirection();
 
             app.UseRouting();
-
+            app.UseCors();
             app.UseAuthorization();
+
+                string token = Configuration.GetSection("BotConfiguration").GetValue<string>("BotToken");
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllerRoute("telegram", "bot/"+token, new {controller = "Hook", action = "Post"});
                 endpoints.MapControllers();
+                
             });
         }
     }
