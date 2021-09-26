@@ -11,4 +11,4 @@ Simple crypto trading bot library. Algorithm is pretty simple:
   1. [Relative strength index](https://en.wikipedia.org/wiki/Relative_strength_index)
   1. [MACD](https://en.wikipedia.org/wiki/MACD)
   1. Binance API implementation
- 
+  1. Telegram bot 
